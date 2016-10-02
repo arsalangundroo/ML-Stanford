@@ -82,6 +82,7 @@ X = [ones(m, 1) X];
 fprintf('Running gradient descent ...\n');
 
 % Choose some alpha value
+
 alpha = 0.3;
 num_iters = 50;
 
@@ -104,6 +105,7 @@ fprintf('\n');
 % ====================== YOUR CODE HERE ======================
 % Recall that the first column of X is all-ones. Thus, it does
 % not need to be normalized.
+
 room_size=(1650-mu(1,1))/sigma(1,1);
 rooms=(3-mu(1,2))/sigma(1,2);
 price = sum([1  room_size rooms]*theta); % You should change this
@@ -151,7 +153,9 @@ fprintf('\n');
 
 % Estimate the price of a 1650 sq-ft, 3 br house
 % ====================== YOUR CODE HERE ======================
+
 price = [1 1650 3]*theta; % You should change this
+
 
 
 % ============================================================
