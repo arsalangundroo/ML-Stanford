@@ -30,8 +30,8 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
- Delta2 = zeros(num_labels, hidden_layer_size);
- Delta1 = zeros(hidden_layer_size, input_layer_size);
+ Delta2 = zeros(num_labels, hidden_layer_size+1);
+ Delta1 = zeros(hidden_layer_size, input_layer_size+1);
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -83,11 +83,12 @@ label = zeros(num_labels,1);
      J= J + sum([-(label.*log(a3))]-[(1-label).*log(1-a3)]);   
      
      delta3 = a3 - label;
-     delta2 = (Theta2(:,2:end)' * delta3) .* sigmoidGradient(z2);
-   % delta2 = delta2(2:end);
+     delta2 = ((Theta2(:,2:end))' * delta3) .* sigmoidGradient(z2);
+     %delta2 = ((Theta2)' * delta3) .* (a2.*(1-a2));
+     %delta2 = delta2(2:end);
           
-     Delta2 = Delta2 + delta3*(a2(2:end,:))';
-     Delta1 = Delta1 + delta2*(a1(2:end,:))';
+     Delta2 = Delta2 + delta3*(a2)';
+     Delta1 = Delta1 + delta2*(a1)';
      
    end
 
@@ -102,8 +103,8 @@ J = J + (lambda/(2*m))*sum(reg_params.^2);
 Theta1_grad = Delta1/m;
 Theta2_grad = Delta2/m;   
 
-Theta1_grad = lambda*(Theta1_grad + Theta1(:,2:end))/m;
-Theta2_grad = lambda*(Theta2_grad + Theta2(:,2:end))/m;
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda*(Theta1(:,2:end))/m;
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda*(Theta2(:,2:end))/m;
 %---------------
 
 
