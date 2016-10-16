@@ -30,6 +30,8 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
+ Delta2 = zeros(num_labels, hidden_layer_size);
+ Delta1 = zeros(hidden_layer_size, input_layer_size);
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -63,31 +65,47 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 X=[ones(m,1) X];
+%---------------
 label = zeros(num_labels,1);
    
    for i= 1: m
-     x = (X(i,:))';
-     z1 = Theta1 * x;
-     a1 = sigmoid(z1);
-   
-     a1= [1;a1];
-     z2 = Theta2 * a1;
+     a1  = (X(i,:))';
+     z2 = Theta1 * a1;
      a2 = sigmoid(z2);
+   
+     a2 = [1;a2];
+     z3 = Theta2 * a2;
+     a3 = sigmoid(z3);
    
      label = zeros(num_labels,1);
      label(y(i))=1;
 
-     J= J + sum([-(label.*log(a2))]-[(1-label).*log(1-a2)]);   
+     J= J + sum([-(label.*log(a3))]-[(1-label).*log(1-a3)]);   
+     
+     delta3 = a3 - label;
+     delta2 = (Theta2(:,2:end)' * delta3) .* sigmoidGradient(z2);
+   % delta2 = delta2(2:end);
+          
+     Delta2 = Delta2 + delta3*(a2(2:end,:))';
+     Delta1 = Delta1 + delta2*(a1(2:end,:))';
+     
    end
 
 J=J/m;
-ThetaReg1=Theta1(:,2:end);
-ThetaReg2=Theta2(:,2:end);
+ThetaReg1 = Theta1(:,2:end);
+ThetaReg2 = Theta2(:,2:end);
 
-reg_params=[ThetaReg1(:); ThetaReg2(:)];
+reg_params = [ThetaReg1(:); ThetaReg2(:)];
 
-J=J + (lambda/(2*m))*sum(reg_params.^2);
-% -------------------------------------------------------------
+J = J + (lambda/(2*m))*sum(reg_params.^2);
+
+Theta1_grad = Delta1/m;
+Theta2_grad = Delta2/m;   
+
+Theta1_grad = lambda*(Theta1_grad + Theta1(:,2:end))/m;
+Theta2_grad = lambda*(Theta2_grad + Theta2(:,2:end))/m;
+%---------------
+
 
 % =========================================================================
 
